@@ -13,15 +13,29 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     @IBOutlet weak var window: NSWindow!
     
-    //let statusItem = NSStatusBar.system().statusItem(withLength: -2)
     let statusItem = NSStatusBar.system().statusItem(withLength: NSVariableStatusItemLength)
-
+    
+    
+    
+    
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         if let button = statusItem.button {
             button.image = NSImage(named: "screen")
-            button.action = #selector(self.printQuote(sender:))
+            //Icon by: http://www.flaticon.com/authors/situ-herrera
+            //Direct link: http://www.flaticon.com/free-icon/screen_23283
+            //TODO: add credit in the help/about page of the app
+            //button.action = #selector(self.printQuote(sender:))
         }
+        
+        let menu = NSMenu()
+        
+        menu.addItem(NSMenuItem(title: "Print Quote", action: #selector(self.printQuote(sender:)), keyEquivalent: ""))
+        menu.addItem(NSMenuItem.separator())
+        menu.addItem(NSMenuItem(title: "Quit Rez", action: #selector(quit), keyEquivalent: ""))
+        
+        statusItem.menu = menu
+
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
@@ -34,6 +48,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         print("\(quoteText) - \(quoteAuthor)")
     
+    }
+    
+    func quit() {
+        NSApp.terminate(self)
     }
 
 }
