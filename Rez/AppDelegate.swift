@@ -33,6 +33,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func updateMenu()
     {
+        //good basic example: https://www.snip2code.com/Snippet/1361281/Change-your-Mac-s-screen-resolution-from
+        //also decent and with sub-menus, but in ObjC: https://github.com/robbertkl/ResolutionMenu/blob/master/Resolution%20Menu/AppDelegate.m
+        //the mystery deepens: http://lists.apple.com/archives/cocoa-dev/2014/May/msg00262.html and http://stackoverflow.com/questions/30859718/cgdisplaycopyalldisplaymodes-leaves-out-one-valid-mode
+        
+        
         var displayCount: UInt32 = 0;
         var result = CGGetActiveDisplayList(0, nil, &displayCount)
         if (result != CGError.success) {
@@ -49,6 +54,21 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         print("\(displayCount) displays:")
         for i in 0..<displayCount {
             print("[\(i)] - \(activeDisplays[Int(i)])")
+           
+            let options: CFDictionary = [kCGDisplayShowDuplicateLowResolutionModes as String : kCFBooleanTrue] as CFDictionary
+            
+            guard let displayModes = CGDisplayCopyAllDisplayModes(activeDisplays[Int(i)], options) as [AnyObject]? else {
+                print("ERROR: CGDisplayCopyAllDisplayModes returned nil")
+                exit(2)
+            }
+            let numModes = displayModes.count //CFArrayGetCount(displayModes)
+            for m in 0..<numModes {
+                let mode = displayModes[m] as! CGDisplayMode
+                if mode.isUsableForDesktopGUI() {
+                    print("  width: \(mode.width), height: \(mode.height)")
+                }
+                
+            }
         }
         activeDisplays.deallocate(capacity: allocated)
         
